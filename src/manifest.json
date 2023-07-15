@@ -8,9 +8,13 @@
     "default_icon": "hello.png"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline' https://music.yandex.ru/;"
+    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self';"
   },
   "background": {
-    "service_worker": "background.js"
-  }
+    "service_worker": "js/background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ]
 }

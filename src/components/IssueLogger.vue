@@ -1,7 +1,15 @@
 <template>
   <div>
     <p class="text-pink-400">{{ defaultText }}</p>
-    <button @click="screenshot">截图</button>
+    <button class="w-10 h-4 bg-blue-300" @click="screenshot">截图</button>
+    <div class="container flex flex-row">
+      <img
+        v-for="(imageUrl, index) in imageUrls"
+        :key="index"
+        class="w-96 h-96 bg-orange-300"
+        :src="imageUrl"
+      />
+    </div>
   </div>
 </template>
 
@@ -10,7 +18,8 @@ export default {
   name: 'IssueLogger',
   data() {
     return {
-      defaultText: '第一个插件',
+      defaultText: '缺陷记录',
+      imageUrls: [],
     };
   },
   mounted() {
@@ -18,24 +27,20 @@ export default {
   },
   methods: {
     screenshot() {
-      chrome.runtime.sendMessage({ action: 'CAPTURE_SCREEN' }, (response) => {
-        console.log(response);
-      });
-      chrome.windows.getCurrent(function (win) {
-        // 抓取当前tab的内容
-        chrome.tabs.captureVisibleTab(win.id, {}, function (dataUrl) {
-          const info = {
-            action: 'CAPTURE_SCREEN',
-            payload: dataUrl,
-          };
-          this.sendMessage(info);
-        });
+      let _this = this;
+      chrome.windows.getCurrent(async function (win) {
+        await chrome.tabs
+          .captureVisibleTab(win.id, {})
+          .then((result) => {
+            _this.contactImgUrl(result);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
       });
     },
-    sendMessage(msg, callback) {
-      chrome.runtime.sendMessage(JSON.stringify(msg), function (response) {
-        if (callback) callback(response);
-      });
+    contactImgUrl(imageBase64) {
+      this.imageUrls.push('data:image/png;base64 ' + imageBase64);
     },
     getMessage() {
       chrome.runtime.onMessage.addListener(function (
@@ -43,9 +48,9 @@ export default {
         sender,
         sendResponse
       ) {
-        console.log(request);
-        console.log(sender);
-        console.log(sendResponse);
+        console.log(request, 'request');
+        console.log(sender, 'sender');
+        console.log(sendResponse, 'sendResponse');
       });
     },
   },
