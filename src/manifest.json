@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "缺陷记录器",
+  "version": "1.0.0",
+  "description": "缺陷记录器",
+  "action": {
+    "default_popup": "Popup.html",
+    "default_icon": "hello.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' 'unsafe-inline' https://music.yandex.ru/;"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
